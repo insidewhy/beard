@@ -1,6 +1,7 @@
 .PHONY: depend clean
 
 -include .deps/all
+-include .deps/sources
 
 compile_get_deps = \
 	`fsc -verbose $1 | grep '^\[wrote ' | sed -e "s,\[wrote $$PWD/./,," -e "s/\]$$//" -e 's/\\$$/$$$$/g'`
@@ -16,18 +17,19 @@ compile_store_deps = \
 
 depend:
 	@echo "compiling project and building dependency list"
+	@mkdir -p .deps
 	@rm -f .deps/sources
-	@rm -f .deps/all
-	for file in */*.scala ; do \
+	@echo -n "default: " > .deps/all
+	@for file in */*.scala ; do \
 		outDir=.deps/`dirname $$file`; \
 		mkdir -p $$outDir; \
 		echo -n "compiling $$file "; \
 		output=$(call compile_get_deps,$$file); \
 		$(call store_deps,$$file,$$output) \
 		echo "done"; \
+		echo -n "`echo $$output` " >> .deps/all; \
 		echo "-include .deps/$$file" >> .deps/sources; \
-	done; \
-	echo "include .deps/sources" >> .deps/all
+	done
 
 %.class:
 	@$(call compile_store_deps,$^)
