@@ -3,6 +3,8 @@
 -include .deps/all
 -include .deps/sources
 
+sources := $(shell find . -name .deps -prune -o -name \*.scala -print | sort)
+
 compile_get_deps = \
 	`fsc -verbose $1 | grep '^\[wrote ' | sed -e "s,\[wrote $$PWD/./,," -e "s/\]$$//" -e 's/\\$$/$$$$/g'`
 
@@ -20,7 +22,7 @@ depend:
 	@mkdir -p .deps
 	@rm -f .deps/sources
 	@echo -n "default: " > .deps/all
-	@for file in */*.scala ; do \
+	@for file in ${sources} ; do \
 		outDir=.deps/`dirname $$file`; \
 		mkdir -p $$outDir; \
 		echo -n "compiling $$file "; \
@@ -29,7 +31,8 @@ depend:
 		echo "done"; \
 		echo -n "`echo $$output` " >> .deps/all; \
 		echo "-include .deps/$$file" >> .deps/sources; \
-	done
+	done; \
+	echo ${sources} | sed "s/ /\n/g" > .deps/files
 
 %.class:
 	@$(call compile_store_deps,$^)
