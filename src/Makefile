@@ -11,7 +11,10 @@ compile_store_deps = \
 	fsc -verbose $1 | awk \
 		'/error:/ { error = 1 } \
 		/./ { if(error == 1) print } \
-		/^\[wrote / { gsub("\\]","",$$2); printf substr($$2,length("'$$PWD'") + 4) " " > ".deps/'$1'" } \
+		/^\[wrote / { \
+			gsub("\\]","",$$2); \
+			gsub("\\$$","$$$$",$$2); \
+			printf substr($$2,length("'$$PWD'") + 4) " " > ".deps/'$1'" } \
 		END { if (error) exit(1) ; print ": '$1'" >> ".deps/'$1'" }'; \
 	echo "done";
 
@@ -19,7 +22,7 @@ depend:
 	@echo "compiling project and building dependency list"
 	@mkdir -p .deps
 	@echo -e "default:\n" > .deps/sources
-	for file in ${sources} ; do \
+	@for file in ${sources} ; do \
 		$(call compile_store_deps,$$file) \
 		echo "-include .deps/$$file" >> .deps/sources; \
 	done; \
