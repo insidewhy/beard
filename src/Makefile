@@ -9,13 +9,14 @@ compile_store_deps = \
 	rm -f .deps/$1; \
 	echo -n "compiling $1 "; \
 	fsc -verbose $1 | awk \
-		'/error:/ { error = 1 } \
+		'BEGIN { objs = "" } \
+		/error:/ { error = 1 } \
 		/./ { if(error == 1) print } \
 		/^\[wrote / { \
 			gsub("\\]","",$$2); \
 			gsub("\\$$","$$$$",$$2); \
-			printf substr($$2,length("'$$PWD'") + 4) " " > ".deps/'$1'" } \
-		END { if (error) exit(1) ; print ": '$1'" >> ".deps/'$1'" }'; \
+			objs = (objs substr($$2,length("'$$PWD'") + 4) " ") } \
+		END { if (error) exit(1) ; print objs ": '$1'\ndefault: " objs >> ".deps/'$1'" }'; \
 	echo "done";
 
 depend:
