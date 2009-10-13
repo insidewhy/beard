@@ -16,7 +16,7 @@ compile_store_deps = \
 			gsub("\\]","",$$2); \
 			gsub("\\$$","$$$$",$$2); \
 			objs = (objs substr($$2,length("'$$PWD'") + 4) " ") } \
-		END { if (error) exit(1) ; print objs ": '$1'\ndefault: " objs >> ".deps/'$1'" }'; \
+		END { if (error) exit(1) ; print objs ": '$1'\ndefault: " objs >> ".deps/'$1'.d" }' || exit 1; \
 	echo "done";
 
 depend:
@@ -25,7 +25,7 @@ depend:
 	@echo -e "default:\n" > .deps/sources
 	@for file in ${sources} ; do \
 		$(call compile_store_deps,$$file) \
-		echo "-include .deps/$$file" >> .deps/sources; \
+		echo "-include .deps/$$file.d" >> .deps/sources; \
 	done; \
 	echo ${sources} | sed "s/ /\n/g" > .deps/files
 
