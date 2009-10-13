@@ -16,7 +16,7 @@ compile_store_deps = \
 			gsub("\\]","",$$2); \
 			gsub("\\$$","$$$$",$$2); \
 			objs = (objs substr($$2,length("'$$PWD'") + 4) " ") } \
-		END { if (error) exit(1) ; print objs ": '$1'\ndefault: " objs >> ".deps/'$1'.d" }' || exit 1; \
+		END { if (error) exit(1) ; print objs ": '$1'\ndefault: " objs > ".deps/'$1'.d" }' || exit 1; \
 	echo "done";
 
 depend:
