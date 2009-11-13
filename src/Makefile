@@ -4,7 +4,7 @@ outOfDateSources := $(shell find . -name .deps -prune -o \( -name \*.scala -a -e
 
 classPath := $(addprefix -cp ,${CLASSPATH})
 
-default:
+build:
 	@if [ -n "${outOfDateSources}" ] ; then \
 		echo "compiling ${outOfDateSources}"; \
 		if fsc ${classPath} ${outOfDateSources}; then \
