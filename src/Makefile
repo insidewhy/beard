@@ -5,11 +5,15 @@ outOfDateSources := $(shell find . -name .deps -prune -o \( -name \*.scala -a -e
 default:
 	@if [ -n "${outOfDateSources}" ] ; then \
 		echo "compiling ${outOfDateSources}"; \
-		fsc ${outOfDateSources} || echo "nothing to compile"; \
-		for f in ${outOfDateSources}; do \
-			mkdir -p `dirname .deps/$$f`; \
-			touch .deps/$$f; \
-		done; \
+		if fsc ${outOfDateSources}; then \
+			echo "compilation succeeded"; \
+			for f in ${outOfDateSources}; do \
+				mkdir -p `dirname .deps/$$f`; \
+				touch .deps/$$f; \
+			done; \
+		else \
+			echo "failed"; \
+		fi \
 	else \
 		echo "nothing to compile"; \
 	fi
