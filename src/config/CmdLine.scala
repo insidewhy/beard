@@ -1,3 +1,5 @@
+// Copyright (c) 2009-2010 James Pike
+// Released under the MIT license
 package org.beard.config
 import scala.collection.mutable.HashMap
 import scala.collection.mutable.Queue
